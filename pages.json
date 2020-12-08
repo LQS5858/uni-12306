@@ -7,6 +7,9 @@
 		{
 			"path": "pages/home/new-index",
 			"style": {
+				"app-plus": {
+					"background": "#0A122D"
+				},
 				"navigationBarTitleText": "uni-12306(v-1.0.0)"
 			}
 		},

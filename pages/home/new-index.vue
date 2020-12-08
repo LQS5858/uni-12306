@@ -2,6 +2,7 @@
   <view class="wrap">
     <view class="u-flex u-row-center img-wrap">
       <image class="header-img"
+             mode="widthFix"
              src="~@/assets/images/header.jpg"></image>
     </view>
     <view class="middle-wrap">
@@ -64,7 +65,7 @@
           </view>
         </view>
         <view class="u-flex email">
-          <text class="required-text">*</text>
+          <!-- <text class="required-text">*</text> -->
           <text class="email">邮箱</text>
           <view style="flex:1">
             <u-input v-model.trim="email"
@@ -185,6 +186,13 @@ export default {
       async handler (val) {
         if (val) {
           this.passengerInfo = await this.fetchPassenger()
+          uni.setStorage({
+            key: 'cookie',
+            data: this.form.cookie,
+            success: function () {
+              console.log('success');
+            }
+          });
         }
       }
     }
@@ -310,7 +318,7 @@ export default {
       const res = await this.$http.post('v3/passenger/findPage', params).catch(err => {
         const { error, message } = err || {}
         uni.showToast({
-          title: '获取乘客信息失败！'
+          title: error || '获取乘客信息失败！'
         })
       })
       console.log('--乘客信息--', res);
@@ -358,7 +366,7 @@ export default {
     },
     async openTicker () {
       const { cookie, fromLocation, toLocation, curCalenda, } = this.form || {}
-      if (!cookie || !fromLocation || !toLocation || !curCalenda || !this.email || _.isEmpty(this.passengerInfo)) {
+      if (!cookie || !fromLocation || !toLocation || !curCalenda || _.isEmpty(this.passengerInfo)) {
         uni.showToast({
           title: '带*项为必填项'
         })
@@ -379,7 +387,20 @@ export default {
       })
       console.log('--res--', res);
       this.submitTicket()
+    },
+    initCookie () {
+      uni.getStorage({
+        key: 'cookie',
+        success: (res) => {
+          console.log(res.data);
+          const { data } = res || {}
+          this.form.cookie = data
+        }
+      })
     }
+  },
+  onShow () {
+    this.initCookie()
   }
 }
 </script>
@@ -440,6 +461,9 @@ export default {
     min-height: 300rpx;
     margin-bottom: 20rpx;
     width: 90%;
+    /deep/ .u-radio__label {
+      color: #ececf5;
+    }
     .table-header {
       display: flex;
       justify-content: space-between;
@@ -493,7 +517,7 @@ export default {
     }
   }
   .header-img {
-    width: 80px;
+    width: 100%;
     height: 60px;
     padding: 20rpx 0;
   }
