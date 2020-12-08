@@ -18,6 +18,12 @@
 			"style": {
 				"navigationBarTitleText": "uni-app"
 			}
+		},
+		{
+			"path": "pages/home/tutorial",
+			"style": {
+				"navigationBarTitleText": "教程"
+			}
 		}
 	],
 	"globalStyle": {

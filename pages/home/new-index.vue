@@ -9,11 +9,18 @@
       <view class="cookie">
         <text class="required-text">*</text>
         <text style="margin-right:20rpx">Cookie</text>
-        <u-input type="textarea"
-                 :border="true"
-                 class="textarea u-line-3"
-                 maxlength="800"
-                 v-model.trim="form.cookie" />
+        <view style="width:100%">
+          <u-input type="textarea"
+                   :border="true"
+                   class="textarea u-line-3"
+                   maxlength="800"
+                   v-model.trim="form.cookie" />
+          <u-button size="mini"
+                    @click.stop="jumpTo"
+                    style="margin-top:10rpx"
+                    shape="circle"
+                    type="primary">查看获取cookie教程</u-button>
+        </view>
       </view>
       <view class="location-wrap">
         <view class="u-flex  u-relative"
@@ -84,26 +91,41 @@
       </view>
       <view class="u-flex bottom">
         <text class="no">定时抢票下单时间</text>
-        <u-input v-model.trim="date"
-                 type="text"
-                 :border="true" />
+        <u-picker mode="time"
+                  @confirm="dateHandler"
+                  :params="orderTimeFormat"
+                  v-model="showDate"></u-picker>
+        <view class="u-flex u-relative u-border"
+              style="flex:1;height:70rpx"
+              @click="showDate=true">
+          <text class="u-border date">{{date}}</text>
+          <u-icon name="arrow-down-fill"
+                  color="black"
+                  class="u-absolute down-icon"
+                  size="5"></u-icon>
+        </view>
+      </view>
+      <view class="tiket-list">
+        <text class="required-text">*</text>
+        <text>乘客信息</text>
+        <template v-if="passengerList&&passengerList.length">
+          <u-radio-group v-model="passenger">
+            <u-radio v-for="(item, index) in passengerList"
+                     :key="index"
+                     :name="item.passenger_name">
+              {{item.passenger_name}}
+            </u-radio>
+          </u-radio-group>
+        </template>
+        <template v-else>
+          <view style="margin-top:30rpx;text-align:center">暂无数据</view>
+        </template>
+
       </view>
       <view class="footer-btn u-flex">
-
         <u-button type="success"
                   @click="openTicker">开始抢票</u-button>
       </view>
-    </view>
-    <view class="tiket-list">
-      <text class="required-text">*</text>
-      <text>乘客信息</text>
-      <u-radio-group v-model="passenger">
-        <u-radio v-for="(item, index) in passengerList"
-                 :key="index"
-                 :name="item.passenger_name">
-          {{item.passenger_name}}
-        </u-radio>
-      </u-radio-group>
     </view>
     <view class="tiket-list">
       <text class="header">车次列表(说明:没有输入车次的话默认自动抢票订单列表第一个订单)</text>
@@ -141,7 +163,7 @@ export default {
   data () {
     return {
       scrollTop: 0,
-
+      showDate: false,
       showFromLocation: false,
       showCalendar: false,
       passengerInfo: {},
@@ -165,6 +187,13 @@ export default {
         day: true,
         hour: false,
         minute: false,
+      },
+      orderTimeFormat: {
+        year: true,
+        month: true,
+        day: true,
+        hour: true,
+        minute: true,
       },
       curCalenda: null,
       ticketList: [],
@@ -213,6 +242,21 @@ export default {
     }
   },
   methods: {
+    jumpTo () {
+      uni.navigateTo({
+        url: '/pages/home/tutorial'
+      })
+    },
+    dateHandler (v) {
+      //       day: "08"
+      // hour: "13"
+      // minute: "24"
+      // month: "12"
+      // year: "2020"
+      console.log('--定时时间--', v);
+      const { year, month, day, hour, minute } = v || {}
+      this.date = `${year}-${month}-${day} ${hour}:${minute}`
+    },
     getLocationCode (name) {
       const { value } = _.find(this.locationListFormat, item => item.label === name) || {}
       return value
@@ -372,7 +416,11 @@ export default {
         }
       }
       console.log('---parasm-data--', params.data);
-      this.$http.post('v3/ticket/submit', params)
+      this.$http.post('v3/ticket/submit', params).then(() => {
+        uni.showToast({
+          title: '抢票成功,请登录12306查看'
+        })
+      })
     },
     async openTicker () {
       const { cookie, fromLocation, toLocation, curCalenda, } = this.form || {}
@@ -505,6 +553,12 @@ export default {
     align-items: center;
     margin-top: 20rpx;
     padding-bottom: 40rpx;
+    // .cookie-input {
+    //   width: 100%;
+    //   .room {
+    //     text-align: right;
+    //   }
+    // }
     .textarea {
       height: 200rpx;
       /deep/.uni-textarea-textarea {
