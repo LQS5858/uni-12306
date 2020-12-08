@@ -420,6 +420,11 @@ export default {
         uni.showToast({
           title: '抢票成功,请登录12306查看'
         })
+      }).catch(err => {
+        const { error, message } = err || {}
+        uni.showToast({
+          title: error || message
+        })
       })
     },
     async openTicker () {
