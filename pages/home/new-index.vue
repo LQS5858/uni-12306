@@ -390,6 +390,7 @@ export default {
       console.log('--params--', params);
       const res = await this.$http.post('v3/member/checkUser', params).catch(err => {
         const { error, message } = err || {}
+        this.clearCookie()
         uni.showToast({
           title: '未登录或登录已失效!'
         })
