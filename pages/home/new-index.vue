@@ -308,6 +308,15 @@ export default {
       }
       return ret
     },
+    clearCookie () {
+      uni.removeStorage({
+        key: 'cookie',
+        success: function (res) {
+          console.log('success');
+        }
+      });
+      this.form.cookie = null
+    },
     async fetchPassenger () {
       const { cookie } = this.form || {}
       const params = {
@@ -317,6 +326,7 @@ export default {
       }
       const res = await this.$http.post('v3/passenger/findPage', params).catch(err => {
         const { error, message } = err || {}
+        this.clearCookie()
         uni.showToast({
           title: error || '获取乘客信息失败！'
         })
