@@ -6,7 +6,7 @@ import Vue from 'vue'
 // 全局配置
 request.setConfig({
 	withCredentials: true,
-	baseUrl: process.env.NODE_ENV === 'development' ? 'http://47.115.15.139:8888' : 'http://47.115.15.139:8888', // 此为测试地址，需加入到域名白名单，或者更改为您自己的线上地址即可
+	baseUrl: process.env.NODE_ENV === 'development' ? 'http://localhost:8888' : 'http://47.115.15.139:8888', // 此为测试地址，需加入到域名白名单，或者更改为您自己的线上地址即可
 })
 
 // 设置请求拦截器
@@ -35,11 +35,12 @@ request.interceptors.request(config => {
 request.interceptors.response(res => {
 	const { data, config, statusCode } = res || {}
 	const { data: _data, success } = data || {}
-	console.log('--code--', data, config)
+	console.log('--code--', data, success)
 	if (success) {
-		return _data
+		return Promise.resolve(_data)
+	} else {
+		return Promise.reject(data)
 	}
-	return Promise.reject(data)
 
 	// 接收请求，执行响应操作
 	// 您的逻辑......

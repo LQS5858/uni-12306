@@ -3,128 +3,139 @@
     <view class="u-flex u-row-center img-wrap">
       <image class="header-img"
              mode="widthFix"
-             src="~@/assets/images/header.jpg"></image>
+             src="/static/images/header.jpg"></image>
     </view>
+
     <view class="middle-wrap">
       <view class="cookie">
         <text class="required-text">*</text>
         <text style="margin-right:20rpx">Cookie</text>
-        <view style="width:100%">
-          <u-input type="textarea"
-                   :border="true"
-                   class="textarea u-line-3"
-                   maxlength="800"
-                   v-model.trim="form.cookie" />
-          <u-button size="mini"
-                    @click.stop="jumpTo"
-                    style="margin-top:10rpx"
-                    shape="circle"
-                    type="primary">查看获取cookie教程</u-button>
+        <view style="flex:1">
+          <textarea class="textarea"
+                    clearable
+                    adjust-position
+                    maxlength="800"
+                    v-model.trim="form.cookie" />
+          <button size="mini"
+                  @click.stop="jumpTo"
+                  style="margin-top:10rpx"
+                  shape="circle"
+                  type="primary">查看获取cookie教程</button>
         </view>
       </view>
       <view class="location-wrap">
-        <view class="u-flex  u-relative"
-              @click="showFromLocation=true">
+        <view @click="showFromLocation=true"
+              class="row">
           <text class="required-text">*</text>
           <text class="from-location">出发地</text>
-          <u-input class="u-border select"
-                   :border="true"
-                   v-model.trim="form.fromLocation"></u-input>
-          <!-- <u-select v-model="showFromLocation"
-                    @confirm="fromSelectHandler"
-                    :list="locationListFormat">
-          </u-select> -->
-          <!-- <u-icon name="arrow-down-fill"
-                  color="black"
-                  class="u-absolute down-icon"
-                  size="5"></u-icon> -->
+          <input class="u-border select uni-input"
+                 placeholder="深圳"
+                 @input="form.fromLocation=form.fromLocation.replace(/\s*/g,'')"
+                 v-model.trim="form.fromLocation" />
+
         </view>
-        <view class="u-flex  u-relative"
-              @click="showEndLocation=true">
+        <view @click="showEndLocation=true"
+              class="row">
           <text class="required-text">*</text>
           <text class="from-location">目的地</text>
-          <u-input class="u-border select"
-                   :border="true"
-                   v-model.trim="form.toLocation"></u-input>
-          <!-- <u-select v-model="showEndLocation"
-                    @confirm="toSelectHandler"
-                    :list="locationListFormat"></u-select> -->
-          <!-- <u-icon name="arrow-down-fill"
-                  color="black"
-                  class="u-absolute down-icon"
-                  size="5"></u-icon> -->
+          <input class="u-border select uni-input"
+                 placeholder="祁阳北"
+                 @input="form.toLocation=form.toLocation.replace(/\s*/g,'')"
+                 v-model.trim="form.toLocation" />
+
         </view>
-        <view class="u-flex date-wrap">
+        <view class="date-wrap row">
           <text class="required-text">*</text>
           <text class="from-location">出发日期</text>
-          <u-picker mode="time"
-                    @confirm="calendarHandler"
-                    :params="dateFormat"
-                    v-model="showCalendar"></u-picker>
-          <view class="u-flex u-relative"
-                style="flex:1"
-                @click="showCalendar=true">
-            <text class="u-border date">{{form.curCalenda}}</text>
-            <u-icon name="arrow-down-fill"
-                    color="black"
-                    class="u-absolute down-icon"
-                    size="5"></u-icon>
-          </view>
+          <picker mode="date"
+                  class="date uni-input"
+                  :value="pickDate"
+                  :start="startDate"
+                  :end="endDate"
+                  @change="bindDateChange">
+            <view class="uni-input">{{form.curCalenda}}</view>
+          </picker>
+          <!-- <input class="date uni-input"
+                 @blur="curCalendaBlur"
+                 placeholder="格式:2020-12-30"
+                 v-model.trim="form.curCalenda" /> -->
         </view>
-        <view class="u-flex email">
+        <view class="email date-wrap row">
           <!-- <text class="required-text">*</text> -->
           <text class="email">邮箱</text>
           <view style="flex:1">
-            <u-input v-model.trim="email"
-                     type="text"
-                     :border="true"></u-input>
+            <input v-model.trim="email"
+            @input="email=email.replace(/\s*/g,'')"
+                   class="date uni-input"
+                   type="text" />
             <text class="email-tip">邮箱用于接收下单成功后发送提示信息</text>
           </view>
         </view>
-
-      </view>
-      <view class="u-flex bottom">
-        <text class="no">购买车次</text>
-        <u-input v-model.trim="train_no"
+        <view class="bottom date-wrap row">
+          <text class="no">购买车次</text>
+          <input v-model.trim="train_no"
                  type="text"
-                 :border="true" />
-      </view>
-      <view class="u-flex bottom">
-        <text class="no">定时抢票下单时间</text>
-        <u-picker mode="time"
-                  @confirm="dateHandler"
-                  :params="orderTimeFormat"
-                  v-model="showDate"></u-picker>
-        <view class="u-flex u-relative u-border"
-              style="flex:1;height:70rpx"
-              @click="showDate=true">
-          <text class="u-border date">{{date}}</text>
-          <u-icon name="arrow-down-fill"
-                  color="black"
-                  class="u-absolute down-icon"
-                  size="5"></u-icon>
+                 placeholder="车次"
+                 class="date uni-input" />
+        </view>
+        <view class="bottom date-wrap row">
+          <text class="no">定时抢票下单时间</text>
+          <picker mode="date"
+                  :value="orderDate"
+                  :start="startDate"
+                  :end="endDate"
+                  style="flex:3"
+                  class="date uni-input"
+                  @change="bindOrderDateChange">
+            <view class="uni-input">{{showDate}}</view>
+          </picker>
+          <view>-</view>
+          <picker mode="time" 
+          style="flex:1"
+          class="date uni-input"
+          :value="time" start="00:00" end="23:59" @change="bindOrderTimeChange">
+						<view class="uni-input">{{time}}</view>
+					</picker>
+          <!-- <input type="text"
+                 placeholder="2020-12-30 13:58"
+                 class="date uni-input"
+                 v-model.trim="date"> -->
         </view>
       </view>
+
       <view class="tiket-list">
         <text class="required-text">*</text>
         <text>乘客信息</text>
         <template v-if="passengerList&&passengerList.length">
-          <u-radio-group v-model="passenger">
-            <u-radio v-for="(item, index) in passengerList"
-                     :key="index"
-                     :name="item.passenger_name">
+          <radio-group @change="radioChange"
+                       class="uni-radio-group">
+            <label class="uni-list-cell uni-list-cell-pd"
+                   v-for="(item, index) in passengerList"
+                   :key="index">
+              <view>
+                <radio :value="String(index)"
+                       :checked="(item&&item.index_id)===(passengerInfo&&passengerInfo.index_id)" />
+              </view>
+              <view>{{item.passenger_name}}</view>
+            </label>
+          </radio-group>
+          <!-- <radio-group v-model="passenger">
+            <radio v-for="(item, index) in passengerList"
+                   :key="index"
+                   :name="item.passenger_name">
               {{item.passenger_name}}
-            </u-radio>
-          </u-radio-group>
+            </radio>
+          </radio-group> -->
         </template>
         <template v-else>
           <view style="margin-top:30rpx;text-align:center">暂无数据</view>
         </template>
 
       </view>
-      <view class="footer-btn u-flex">
-        <u-button type="success"
-                  @click="openTicker">开始抢票</u-button>
+      <view class="footer-btn">
+        <button type="primary"
+        :disabled="ticketBtnDisable"
+                @click="openTicker">开始抢票</button>
       </view>
     </view>
     <view class="tiket-list">
@@ -158,18 +169,44 @@ import _ from 'lodash'
 import Station from 'config/station.json'
 import moment from 'moment'
 import { ua } from 'config/ua'
+function getDate (type) {
+  const date = new Date();
+
+  let year = date.getFullYear();
+  let month = date.getMonth() + 1;
+  let day = date.getDate();
+
+  if (type === 'start') {
+    year = year - 10;
+  } else if (type === 'end') {
+    year = year + 10;
+  }
+  month = month > 9 ? month : '0' + month;;
+  day = day > 9 ? day : '0' + day;
+
+  return `${year}-${month}-${day}`;
+}
 export default {
   name: "home",
   data () {
     return {
       scrollTop: 0,
-      showDate: false,
+      time:'',
+      showDate: '',
+      ticketBtnDisable:false,
       showFromLocation: false,
       showCalendar: false,
       passengerInfo: {},
+      startDate: getDate('start'),
+      endDate: getDate('end'),
       passengerList: [],
-      passenger: 0,
       email: null,
+      pickDate: getDate({
+        format: true
+      }),
+      orderDate: getDate({
+        format: true
+      }),
       form: {
         cookie: null,
         fromLocation: null,
@@ -180,7 +217,14 @@ export default {
       fromLocation: null,
       toLocation: null,
       train_no: null,
+      flag: false,
       date: null,
+      info: {
+        lunar: true,
+        range: true,
+        insert: false,
+        selected: []
+      },
       dateFormat: {
         year: true,
         month: true,
@@ -200,6 +244,7 @@ export default {
       locationList: Station.stationInfo
     };
   },
+  components: {},
   watch: {
     form: {
       deep: true,
@@ -207,14 +252,12 @@ export default {
         this.fetchTicket(val)
       }
     },
-    passenger (val) {
-      this.passengerInfo = _.find(this.passengerList, item => item.passenger_name === val)
-      console.log('--改变了乘客信息--', this.passengerInfo);
-    },
+
     'form.cookie': {
       async handler (val) {
         if (val) {
           this.passengerInfo = await this.fetchPassenger()
+          console.log('---passenger--', this.passengerInfo);
           uni.setStorage({
             key: 'cookie',
             data: this.form.cookie,
@@ -242,6 +285,31 @@ export default {
     }
   },
   methods: {
+    bindOrderTimeChange(e){
+            const { value } = e.detail || {}
+            console.log('--time--',value);
+            this.time=value
+            this.date=`${this.showDate} ${value}`
+    },
+    bindOrderDateChange(e){
+      const { value } = e.detail || {}
+      this.showDate=value
+      this.date =this.time?`${this.showDate} ${this.time}`:value
+    },
+    bindDateChange: function (e) {
+      const { value } = e.detail || {}
+      this.form.curCalenda = value
+    },
+   
+    radioChange (v) {
+      console.log('--v--', v);
+      const { detail } = v || {}
+      const { value } = detail || {}
+      this.passengerInfo = this.passengerList[value]
+      console.log('---passenger--', this.passengerInfo);
+    },
+    getResult () { },
+
     jumpTo () {
       uni.navigateTo({
         url: '/pages/home/tutorial'
@@ -268,7 +336,8 @@ export default {
         const to_station = this.getLocationCode(toLocation)
         if (!from_station || !toLocation) {
           uni.showToast({
-            title: '没有您查询的站点,请核准站点重新查询!'
+            title: '没有您查询的站点,请核准站点重新查询!',
+            duration:5000
           })
           return
         }
@@ -279,7 +348,8 @@ export default {
         const res = await this.$http.get(`v3/query/ticket?${query}`).catch(err => {
           const { error, message } = err || {}
           uni.showToast({
-            title: error || message
+            title: error || message,
+                        duration:5000
           })
         })
         console.log('--res--', res);
@@ -372,14 +442,14 @@ export default {
         const { error, message } = err || {}
         this.clearCookie()
         uni.showToast({
-          title: error || '获取乘客信息失败！'
+          title: error || '获取乘客信息失败！',
+                      duration:5000
         })
       })
       console.log('--乘客信息--', res);
       const { normal_passengers } = res || {}
       const info = normal_passengers && normal_passengers[0]
       this.passengerList = normal_passengers || []
-      this.passenger = info && info.passenger_name && info.passenger_name
       return info
     },
     async submitTicket () {
@@ -399,7 +469,8 @@ export default {
       const _train_date = this.$utils.trim(train_date)
       if (!from_station || !to_station) {
         uni.showToast({
-          title: '没有您查询的站点,请核查站点后重新查询'
+          title: '没有您查询的站点,请核查站点后重新查询',
+                      duration:5000
         })
         return
       }
@@ -418,12 +489,19 @@ export default {
       console.log('---parasm-data--', params.data);
       this.$http.post('v3/ticket/submit', params).then(() => {
         uni.showToast({
-          title: '抢票成功,请登录12306查看'
+          title: this.date?'已提交预定时间抢票,到达预定时间后会自动执行抢票!':'抢票成功,请登录12306查看',
+                      duration:5000
         })
+        const id=setTimeout(() => {
+          this.ticketBtnDisable=false
+          clearTimeout(id)
+        }, 5000);
       }).catch(err => {
+       this.ticketBtnDisable=false
         const { error, message } = err || {}
         uni.showToast({
-          title: error || message
+          title: error || message,
+                      duration:5000
         })
       })
     },
@@ -431,7 +509,8 @@ export default {
       const { cookie, fromLocation, toLocation, curCalenda, } = this.form || {}
       if (!cookie || !fromLocation || !toLocation || !curCalenda || _.isEmpty(this.passengerInfo)) {
         uni.showToast({
-          title: '带*项为必填项'
+          title: '带*项为必填项',
+                      duration:5000
         })
         return
       }
@@ -441,15 +520,17 @@ export default {
         }
       }
       console.log('--params--', params);
+            this.ticketBtnDisable=true
       const res = await this.$http.post('v3/member/checkUser', params).catch(err => {
         const { error, message } = err || {}
         this.clearCookie()
         uni.showToast({
-          title: '未登录或登录已失效!'
+          title: '未登录或登录已失效!',
+                      duration:5000
         })
         return
       })
-      console.log('--res--', res);
+      console.log('--定时下单时间--', this.date);
       this.submitTicket()
     },
     initCookie () {
@@ -513,6 +594,10 @@ export default {
   }
   .footer-btn {
     margin: 20rpx 0;
+    .ticket-btn {
+      background: #409eff;
+      color: #fff;
+    }
   }
   .down-icon {
     right: 5rpx;
@@ -525,6 +610,20 @@ export default {
     min-height: 300rpx;
     margin-bottom: 20rpx;
     width: 90%;
+    /deep/.uni-radio-input {
+      width: 20rpx;
+      height: 20rpx;
+    }
+    /deep/.uni-radio-group {
+      display: flex;
+      align-items: center;
+      flex-wrap: wrap;
+    }
+    /deep/.uni-list-cell {
+      display: flex;
+      align-items: center;
+      padding-right: 40rpx;
+    }
     /deep/ .u-radio__label {
       color: #ececf5;
     }
@@ -536,13 +635,19 @@ export default {
   .date-wrap {
     .date {
       height: 70rpx;
-      width: 100%;
+      // width: 100%;
       line-height: 70rpx;
+      border: 1px solid;
     }
   }
   .location-wrap {
-    & > uni-view {
+    .row {
       padding-bottom: 40rpx;
+      display: flex;
+      align-items: center;
+      .uni-input {
+        flex: 1;
+      }
     }
     .from-location {
       padding-right: 30rpx;
@@ -550,6 +655,7 @@ export default {
     .select {
       height: 70rpx;
       line-height: 70rpx;
+      border: 1px solid;
       flex: 1;
     }
   }
@@ -566,6 +672,9 @@ export default {
     // }
     .textarea {
       height: 200rpx;
+      flex: 1;
+      width: 100%;
+      border: 1px solid;
       /deep/.uni-textarea-textarea {
         color: #ececf5;
       }

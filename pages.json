@@ -10,13 +10,7 @@
 				"app-plus": {
 					"background": "#0A122D"
 				},
-				"navigationBarTitleText": "uni-12306(v-1.0.0)"
-			}
-		},
-		{
-			"path": "pages/index/index",
-			"style": {
-				"navigationBarTitleText": "uni-app"
+				"navigationBarTitleText": "uni-12306(v1.0.0)"
 			}
 		},
 		{
