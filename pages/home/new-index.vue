@@ -65,7 +65,7 @@
           <text class="email">邮箱</text>
           <view style="flex:1">
             <input v-model.trim="email"
-            @input="email=email.replace(/\s*/g,'')"
+                   @input="email=email.replace(/\s*/g,'')"
                    class="date uni-input"
                    type="text" />
             <text class="email-tip">邮箱用于接收下单成功后发送提示信息</text>
@@ -90,12 +90,15 @@
             <view class="uni-input">{{showDate}}</view>
           </picker>
           <view>-</view>
-          <picker mode="time" 
-          style="flex:1"
-          class="date uni-input"
-          :value="time" start="00:00" end="23:59" @change="bindOrderTimeChange">
-						<view class="uni-input">{{time}}</view>
-					</picker>
+          <picker mode="time"
+                  style="flex:1"
+                  class="date uni-input"
+                  :value="time"
+                  start="00:00"
+                  end="23:59"
+                  @change="bindOrderTimeChange">
+            <view class="uni-input">{{time}}</view>
+          </picker>
           <!-- <input type="text"
                  placeholder="2020-12-30 13:58"
                  class="date uni-input"
@@ -134,7 +137,7 @@
       </view>
       <view class="footer-btn">
         <button type="primary"
-        :disabled="ticketBtnDisable"
+                :disabled="ticketBtnDisable"
                 @click="openTicker">开始抢票</button>
       </view>
     </view>
@@ -191,9 +194,9 @@ export default {
   data () {
     return {
       scrollTop: 0,
-      time:'',
+      time: '',
       showDate: '',
-      ticketBtnDisable:false,
+      ticketBtnDisable: false,
       showFromLocation: false,
       showCalendar: false,
       passengerInfo: {},
@@ -285,22 +288,22 @@ export default {
     }
   },
   methods: {
-    bindOrderTimeChange(e){
-            const { value } = e.detail || {}
-            console.log('--time--',value);
-            this.time=value
-            this.date=`${this.showDate} ${value}`
-    },
-    bindOrderDateChange(e){
+    bindOrderTimeChange (e) {
       const { value } = e.detail || {}
-      this.showDate=value
-      this.date =this.time?`${this.showDate} ${this.time}`:value
+      console.log('--time--', value);
+      this.time = value
+      this.date = `${this.showDate} ${value}`
+    },
+    bindOrderDateChange (e) {
+      const { value } = e.detail || {}
+      this.showDate = value
+      this.date = this.time ? `${this.showDate} ${this.time}` : value
     },
     bindDateChange: function (e) {
       const { value } = e.detail || {}
       this.form.curCalenda = value
     },
-   
+
     radioChange (v) {
       console.log('--v--', v);
       const { detail } = v || {}
@@ -337,7 +340,7 @@ export default {
         if (!from_station || !toLocation) {
           uni.showToast({
             title: '没有您查询的站点,请核准站点重新查询!',
-            duration:5000
+            duration: 5000
           })
           return
         }
@@ -349,7 +352,7 @@ export default {
           const { error, message } = err || {}
           uni.showToast({
             title: error || message,
-                        duration:5000
+            duration: 5000
           })
         })
         console.log('--res--', res);
@@ -443,7 +446,7 @@ export default {
         this.clearCookie()
         uni.showToast({
           title: error || '获取乘客信息失败！',
-                      duration:5000
+          duration: 5000
         })
       })
       console.log('--乘客信息--', res);
@@ -470,7 +473,7 @@ export default {
       if (!from_station || !to_station) {
         uni.showToast({
           title: '没有您查询的站点,请核查站点后重新查询',
-                      duration:5000
+          duration: 5000
         })
         return
       }
@@ -489,28 +492,35 @@ export default {
       console.log('---parasm-data--', params.data);
       this.$http.post('v3/ticket/submit', params).then(() => {
         uni.showToast({
-          title: this.date?'已提交预定时间抢票,到达预定时间后会自动执行抢票!':'抢票成功,请登录12306查看',
-                      duration:5000
+          title: this.date ? '已提交预定时间抢票,到达预定时间后会自动执行抢票!' : '抢票成功,请登录12306查看',
+          duration: 5000
         })
-        const id=setTimeout(() => {
-          this.ticketBtnDisable=false
+        const id = setTimeout(() => {
+          this.ticketBtnDisable = false
           clearTimeout(id)
         }, 5000);
       }).catch(err => {
-       this.ticketBtnDisable=false
+        this.ticketBtnDisable = false
         const { error, message } = err || {}
         uni.showToast({
           title: error || message,
-                      duration:5000
+          duration: 5000
         })
       })
+    },
+    async setCookie (option) {
+      const { cookie } = option || {}
+      const _cookie = decodeURIComponent(cookie)
+      this.$set(this.form, 'cookie', _cookie)
+      console.log('--接受cookie--', option, _cookie, this.form.cookie);
+
     },
     async openTicker () {
       const { cookie, fromLocation, toLocation, curCalenda, } = this.form || {}
       if (!cookie || !fromLocation || !toLocation || !curCalenda || _.isEmpty(this.passengerInfo)) {
         uni.showToast({
           title: '带*项为必填项',
-                      duration:5000
+          duration: 5000
         })
         return
       }
@@ -520,13 +530,13 @@ export default {
         }
       }
       console.log('--params--', params);
-            this.ticketBtnDisable=true
+      this.ticketBtnDisable = true
       const res = await this.$http.post('v3/member/checkUser', params).catch(err => {
         const { error, message } = err || {}
         this.clearCookie()
         uni.showToast({
           title: '未登录或登录已失效!',
-                      duration:5000
+          duration: 5000
         })
         return
       })
@@ -546,6 +556,9 @@ export default {
   },
   onShow () {
     this.initCookie()
+  },
+  onLoad (options) {
+    this.setCookie(options)
   }
 }
 </script>

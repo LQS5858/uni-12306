@@ -14,6 +14,15 @@
 			}
 		},
 		{
+			"path": "pages/login/index",
+			"style": {
+				"app-plus": {
+					"background": "#0A122D"
+				},
+				"navigationBarTitleText": "uni-12306(v1.0.0)"
+			}
+		},
+		{
 			"path": "pages/home/tutorial",
 			"style": {
 				"navigationBarTitleText": "教程"

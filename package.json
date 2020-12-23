@@ -1,7 +1,11 @@
 {
+  "scripts": {
+    "phantomjs": "node_modules/.bin/phantomjs"
+  },
   "dependencies": {
     "@babel/plugin-proposal-optional-chaining": "^7.12.7",
     "lodash": "^4.17.20",
-    "moment": "^2.29.1"
+    "moment": "^2.29.1",
+    "phantomjs": "^2.1.7"
   }
 }
